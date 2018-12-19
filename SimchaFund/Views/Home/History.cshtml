@@ -1,0 +1,31 @@
+﻿@using SimchaFund.Data
+@model SimchaFund.Models.HistoryViewModel
+<div class="col-lg-5 col-md-offset-5">
+<h1 style="color:red;">History for @Model.Name</h1>
+</div>
+<div class="table-responsive">
+    <br />
+    <table class="table table-striped table-bordered">
+        <tr>
+            <th style="text-align:center;vertical-align:middle;">Action</th>
+            <th style="text-align:center;vertical-align:middle;">Date</th>
+            <th style="text-align:center;vertical-align:middle;">Amount</th>
+
+
+        </tr>
+        
+        @foreach (var h in Model.ContributorHistory)
+        {
+            <tr>
+              
+                    <td style="text-align:center;vertical-align:middle;">@h.Action</td>
+                    <td style="text-align:center;vertical-align:middle;">@h.Date</td>
+                    <td style="text-align:center;vertical-align:middle;">@h.Amount</td>
+                </tr>
+
+        }
+
+    </table>
+    <br>
+   <a href="/home/contributors" class="btn btn-danger">Back</a>
+</div>

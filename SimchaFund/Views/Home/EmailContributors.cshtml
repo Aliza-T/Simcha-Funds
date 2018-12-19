@@ -1,0 +1,16 @@
+﻿@using SimchaFund.Data
+@model SimchaFund.Models.EmailContributorVM
+
+
+<div class=" container" style="margin-top:50px">
+   
+        <h1 style="color:darkslategrey"> Contributors for @Model.SimchaName</h1>
+
+    <br />
+   
+    @foreach (Contributors c in Model.Contributors)
+    {
+        <h3> * @c.FirstName @c.LastName</h3>
+    }
+</div>
+

@@ -1,0 +1,186 @@
+﻿@using SimchaFund.Data
+@model SimchaFund.Models.ContributorViewModel
+<div class="container">
+    <div class="header">
+        <div class="col-lg-6 col-md-offset-5">
+            <h1 style="color:cadetblue; text-decoration:underline">Contributors</h1>
+            <br />
+            <input type="text" class="input-sm" placeholder="Search" id="search">
+            <button class="btn" id="clear">Clear</button>
+        </div>
+    </div>
+
+    <div class="row header">
+        <div class="col-lg-6 col-md-2">
+            <button class="btn btn-success" id="contributor">New contributor</button>
+      </div>
+        <div class="col-lg-6 col-md-offset-10">
+            <h4>Total = @Model.Balance.ToString("C")</h4>
+
+        </div>
+   
+
+
+    <div class="table-responsive">
+        <br />
+        <table class="table table-striped table-bordered" id="table">
+            <tr>
+                <th style="text-align:center;vertical-align:middle;">Deposit</th>
+                <th style="text-align:center;vertical-align:middle;">First Name</th>
+                <th style="text-align:center;vertical-align:middle;">Last Name</th>
+                <th style="text-align:center;vertical-align:middle;">Cell</th>
+                <th style="text-align:center;vertical-align:middle;">Balance</th>
+                <th style="text-align:center;vertical-align:middle;">Always Include</th>
+                <th style="text-align:center;vertical-align:middle;">History/Edit</th>
+
+            </tr>
+            @foreach (var c in Model.contributors.OrderBy(p=>p.contributors.FirstName))
+            {
+                <tr>
+                    <td><a class="btn btn-success deposit button" data-contributor-id="@c.contributors.Id">Deposit</a></td>
+                    <td style="text-align:center;vertical-align:middle;">@c.contributors.FirstName</td>
+                    <td style="text-align:center;vertical-align:middle;">@c.contributors.LastName</td>
+                    <td style="text-align:center;vertical-align:middle;">@c.contributors.Cell</td>
+                    <td style="text-align:center;vertical-align:middle;" class="@(c.Balance <= 0 ? "text-danger" : "")">$ @c.Balance</td>
+                    <td style="text-align:center;vertical-align:middle;" >
+                        @if (c.contributors.AlwaysInclude)
+                        {
+                            <span style="font-size: 20px;" class="glyphicon glyphicon-ok-sign"></span>
+                        }
+                    </td>
+                    <td style="text-align:center;vertical-align:middle;">
+                        <btn class="btn btn-danger edit button" data-id="@c.contributors.Id"
+                             data-firstname="@c.contributors.FirstName" data-lastname="@c.contributors.LastName"
+                             data-cell="@c.contributors.Cell" data-always_include="@c.contributors.AlwaysInclude" data-date="@c.contributors.DateJoined">Edit</btn>
+                        <a href="/home/History?Id=@c.contributors.Id" class="btn btn-success" data-id="@c.contributors.Id">History</a>
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+    </div>
+</div>
+    </div>
+<div class="modal fade contributor" role="dialog">
+    <div class="modal-dialog">
+        <form action="/home/AddContributor" method="post" style="margin-top: 60px" class="well">
+            <div class="modal-header">
+                <div class=" modal-title"><h3>New Contributor</h3></div>
+            </div>
+            <div class="modal-body">
+                <div class=" form-group">
+                    <label>First Name</label>
+                    <input type="text" placeholder="First Name" name="FirstName" class="form-control" maxlength="50" id="FirstName" />
+                    <br />
+                </div><div class=" form-group">
+                    <label>Last Name</label>
+                    <input type="text" placeholder="Last Name" name="LastName" class="form-control" maxlength="50" id="LastName" />
+                    <br />
+                </div><div class=" form-group">
+                    <label>Cell Number</label>
+                    <input type="text" placeholder="Cell Number" name="Cell" class="form-control" maxlength="50" id="Cell" />
+                    <br />
+                </div>
+
+                <label> Always Include </label>
+                <div class="checkbox">
+                    <input type="checkbox" name="AlwaysInclude" value="true" class="form-control" maxlength="50" id="AlwaysInclude" />
+                    <input name="AlwaysInclude" type="hidden" value="false">
+
+                    <br />
+                </div>
+                <div class=" form-group">
+                    <label>Date</label>
+                    <input type="date" name="Date" class="form-control" maxlength="50" id="Date" placeholder="mm/dd/yyyy" />
+
+                    <br />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade deposit-modal" role="dialog">
+    <div class="modal-dialog">
+        <form action="/home/AddDeposit" method="post" style="margin-top: 60px" class="well">
+            <div class="modal-header">
+                <div class=" modal-title"><h3>Deposit</h3></div>
+            </div>
+            <div class="modal-body">
+                <div class=" form-group">
+                    <label>Amount</label>
+                    <input type="text" placeholder="Deposit Amount" name="DepositAmount" class="form-control" maxlength="50" id="DepositAmount" />
+
+                    <br />
+                </div>
+                <div class=" form-group">
+                    <label>Date</label>
+                    <input type="date" name="Date" class="form-control" maxlength="50" id="Date" placeholder="mm/dd/yyyy" />
+
+                    <br />
+                </div>
+
+            </div>
+            <input type="hidden" name="ContributorId" id="contributorId" />
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade edit-modal" role="dialog">
+    <div class="modal-dialog">
+        <form action="/home/Update" method="post" style="margin-top: 60px" class="well">
+            <div class="modal-header">
+                <div class=" modal-title"><h3>Update</h3></div>
+            </div>
+            <div class="modal-body">
+                <div class=" form-group">
+                    <label>First Name</label>
+                    <input type="text" placeholder="" name="firstName" class="form-control" maxlength="50" id="firstname" />
+                    <br />
+                </div><div class=" form-group">
+                    <label>Last Name</label>
+                    <input type="text" placeholder="" name="lastName" class="form-control" maxlength="50" id="lastName" />
+                    <br />
+                </div><div class=" form-group">
+                    <label>Cell Number</label>
+                    <input type="text" placeholder="" name="cell" class="form-control" maxlength="50" id="cell" />
+                    <br />
+                </div><div class=" form-group">
+
+                    <label> Always Include</label>
+                    <div class="checkbox">
+                        <input type="checkbox" name="AlwaysInclude" value="true" class="form-control" maxlength="50" id="alwaysInclude" />
+                        <input name="AlwaysInclude" type="hidden" value="false">
+
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" class="form-control" id="date" placeholder="mm/dd/yyyy" />
+
+                    <br />
+                </div>
+                <input type="hidden" name="Id" id="id" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+@section scripts
+{
+    <script src="~/Scripts/index.js"></script>
+}
+
